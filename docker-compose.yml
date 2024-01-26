@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  gunicorn:
+    build: .
+    command: gunicorn -c gunicorn_config.py main:main_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - script_db
+
+  script_db:
+    image: postgres
+    ports: 
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: script_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - script_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  script_data:
+    

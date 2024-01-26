@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+#myInput {
+  background-image: url('https://www.w3schools.com/css/searchicon.png'); 
+  background-position: 10px 12px; 
+  background-repeat: no-repeat;
+  width: 100%; 
+  font-size: 16px; 
+  padding: 12px 20px 12px 40px; 
+  border: 1px solid #ddd;
+  margin-bottom: 12px; 
+}
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%; 
+  border: 1px solid #322d34; 
+  font-size: 18px; 
+}
+
+#myTable th, #myTable td {
+  text-align: left; 
+  padding: 12px; 
+}
+
+#myTable tr {
+  
+  border-bottom: 1px solid #ddd;
+}
+
+h1 {
+  text-align: center;
+    }
+
+th {
+  background-color: #75a2f5;
+  border-top: 1px solid #2d2f34;
+  border-bottom: 1px solid #2d3134;
+    }
+
+#myTable tr.header, #myTable tr:hover {
+  background-color: #d4e8fa;
+  cursor: pointer;
+}
+
+th.sortable:hover {
+    cursor: pointer;
+    background-color: #d9bef9 ;
+}
+
+th.sortable:after {
+    content: '\f0dc'; /* Font Awesome arrow icon code */
+    font-family: 'Font Awesome 5 Free'; /* Font Awesome icon font family */
+    font-weight: bold;
+    padding-left: 5px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #21259b;
+    width: 100%;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+
+li a:hover {
+background-color: #1f1294;
+}
+
+</style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+        </head>
+
+        <ul>
+            <li style="float:right"><a class="active" href="{{ url_for('hub') }}">Hub page</a></li>
+        </ul>
+<head>
+
+
+    <title>Film Script View</title>
+</head>
+<body>
+    <h1>Films</h1>
+
+
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for character...">
+
+    <table id="myTable">
+
+        <tr>
+            <th>Line Number</th>
+            <th>Character Name</th>
+            <th>Character Line Number</th>
+            <th>Dialogue</th>
+            <th>Film Name</th>
+          </tr>
+        <tbody>
+            {% for data_row in data %}
+            <tr id="data-row-{{ data_row.line_id }}" onclick="window.location.href='{{ url_for('detail_view', line_id=data_row.line_id) }}';">
+                    <td>{{ data_row.line_id.split('-')[-1] }}</td>
+                    <td>{{ data_row.character_name }}</td>
+                    <td>{{ data_row.character_line_number }}</td>
+                    <td>{{ data_row.dialogue[:10] }}</td>
+                    <td>{{ data_row.film }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+       
+<script>
+    function myFunction() {
+      // Declare variables
+      var input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("myInput");
+      filter = input.value.toUpperCase();
+      table = document.getElementById("myTable");
+      tr = table.getElementsByTagName("tr");
+    
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[1];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+</script>
+
+
+<script>
+    // Variable to store the selected item (line_id)
+    var selectedItem;
+
+    // Function to handle row click
+    function handleTableRowClick(row) {
+        // Extract the rowId from the row ID
+        var rowId = row.id.split('-')[2];
+
+        // Set the selected item
+        selectedItem = rowId;
+
+        // Show the context menu
+        $("#contextMenu").css({
+            display: "block",
+            left: event.pageX,
+            top: event.pageY,
+        });
+
+        // Prevent the default context menu
+        event.preventDefault();
+    }    
+    
+</script>
+
+
+</html>

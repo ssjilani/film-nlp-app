@@ -1,0 +1,52 @@
+<title>Hub page</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Helvetica, sans-serif
+    }
+
+    .features {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 70vh;
+    }
+
+    .feature-box {
+        width: calc(33.33% - 2rem);
+        background-color: rgb(136, 205, 249);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        border-radius: 10px;
+        box-shadow: 0px 2px 6 px rgb(32, 55, 69);
+        color: white;
+        text-align: center;
+    }
+
+    .feature-box h3 {
+        margin: 0 0 1rem 0;
+        font-size: 1.5rem;
+    }
+
+    .feature-box p {
+        margin: 0;
+    }
+
+    .feature-box:hover {
+        background-color: rgb(97, 145, 175)
+    }
+</style>
+
+<body>
+    <section class="features">
+        <div class="feature-box" onclick="location.href='{{  url_for('data_view')  }}'">
+            <h3>View Script Data</h3>
+            <p>Navigate through all the script data extracted from different films.</p>
+        </div>
+    </section>
+</body>
