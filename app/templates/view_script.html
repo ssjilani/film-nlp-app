@@ -1,186 +1,244 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-#myInput {
-  background-image: url('https://www.w3schools.com/css/searchicon.png'); 
-  background-position: 10px 12px; 
-  background-repeat: no-repeat;
-  width: 100%; 
-  font-size: 16px; 
-  padding: 12px 20px 12px 40px; 
-  border: 1px solid #ddd;
-  margin-bottom: 12px; 
-}
-
-#myTable {
-  border-collapse: collapse;
-  width: 100%; 
-  border: 1px solid #322d34; 
-  font-size: 18px; 
-}
-
-#myTable th, #myTable td {
-  text-align: left; 
-  padding: 12px; 
-}
-
-#myTable tr {
-  
-  border-bottom: 1px solid #ddd;
-}
-
-h1 {
-  text-align: center;
-    }
-
-th {
-  background-color: #75a2f5;
-  border-top: 1px solid #2d2f34;
-  border-bottom: 1px solid #2d3134;
-    }
-
-#myTable tr.header, #myTable tr:hover {
-  background-color: #d4e8fa;
-  cursor: pointer;
-}
-
-th.sortable:hover {
-    cursor: pointer;
-    background-color: #d9bef9 ;
-}
-
-th.sortable:after {
-    content: '\f0dc'; /* Font Awesome arrow icon code */
-    font-family: 'Font Awesome 5 Free'; /* Font Awesome icon font family */
-    font-weight: bold;
-    padding-left: 5px;
-}
-
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #21259b;
-    width: 100%;
-}
-
-li {
-    float: left;
-}
-
-li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-
-li a:hover {
-background-color: #1f1294;
-}
-
-</style>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    
-        </head>
-
-        <ul>
-            <li style="float:right"><a class="active" href="{{ url_for('hub') }}">Hub page</a></li>
-        </ul>
 <head>
 
-
-    <title>Film Script View</title>
-</head>
-<body>
-    <h1>Films</h1>
-
-
-    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for character...">
-
-    <table id="myTable">
-
-        <tr>
-            <th>Line Number</th>
-            <th>Character Name</th>
-            <th>Character Line Number</th>
-            <th>Dialogue</th>
-            <th>Film Name</th>
-          </tr>
-        <tbody>
-            {% for data_row in data %}
-            <tr id="data-row-{{ data_row.line_id }}" onclick="window.location.href='{{ url_for('detail_view', line_id=data_row.line_id) }}';">
-                    <td>{{ data_row.line_id.split('-')[-1] }}</td>
-                    <td>{{ data_row.character_name }}</td>
-                    <td>{{ data_row.character_line_number }}</td>
-                    <td>{{ data_row.dialogue[:10] }}</td>
-                    <td>{{ data_row.film }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-       
-<script>
-    function myFunction() {
-      // Declare variables
-      var input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("myInput");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("myTable");
-      tr = table.getElementsByTagName("tr");
-    
-      // Loop through all table rows, and hide those who don't match the search query
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[1];
-        if (td) {
-          txtValue = td.textContent || td.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
-        }
-      }
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
-</script>
+
+    #myInput {
+      background-image: url('https://www.w3schools.com/css/searchicon.png');
+      background-position: 10px 12px;
+      background-repeat: no-repeat;
+      width: 80%;
+      font-size: 16px;
+      padding: 12px 20px 12px 40px;
+      border: 1px solid #ddd;
+      margin-bottom: 12px;
+    }
+
+    #searchButton {
+      padding: 12px;
+      font-size: 16px;
+      background-color: #4c87ca;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    #myTable {
+      border-collapse: collapse;
+      width: 100%;
+      border: 1px solid #322d34;
+      font-size: 18px;
+    }
+
+    #myTable th,
+    #myTable td {
+      text-align: left;
+      padding: 12px;
+    }
+
+    #myTable tr {
+      border-bottom: 1px solid #ddd;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    th {
+      background-color: #75a2f5;
+      border-top: 1px solid #2d2f34;
+      border-bottom: 1px solid #2d3134;
+    }
+
+    #myTable tr.header,
+    #myTable tr:hover {
+      background-color: #d4e8fa;
+      cursor: pointer;
+    }
+
+    th.sortable:hover {
+      cursor: pointer;
+      background-color: #d9bef9;
+    }
+
+    th.sortable:after {
+      content: '\f0dc';
+      font-family: 'Font Awesome 5 Free';
+      font-weight: bold;
+      padding-left: 5px;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #21259b;
+      width: 100%;
+    }
+
+    li {
+      float: left;
+    }
+
+    li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    li a:hover {
+      background-color: #1f1294;
+    }
+
+    .pagination-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4c87ca;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+
+    .center-buttons {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+
+<body>
+  <h1>Films</h1>
+
+  <input type="text" id="myInput" placeholder="Search for character...">
+  <button id="searchButton" onclick="searchData()" type="button">Search</button>
+
+  <table id="myTable">
+    <thead>
+      <tr>
+        <th>Line Number</th>
+        <th>Character Name</th>
+        <th>Character Line Number</th>
+        <th>Dialogue</th>
+        <th>Film Name</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Table body will be dynamically populated -->
+    </tbody>
+  </table>
+
+  <br>
+
+  <div class="center-buttons">
+    <button onclick="changePage(-1)" class="pagination-button">Previous Page</button>
+    <span style="font-size: 18px; margin: 0 10px;"> Page <span id="currentPage" style="font-weight: bold;">1</span></span>
+    <button onclick="changePage(1)" id="nextButton" class="pagination-button">Next Page</button>
+  </div>
 
 
 <script>
-    // Variable to store the selected item (line_id)
-    var selectedItem;
+    var currentPage = 1;
+    var currentSearchTerm = "";
 
-    // Function to handle row click
-    function handleTableRowClick(row) {
-        // Extract the rowId from the row ID
-        var rowId = row.id.split('-')[2];
+    function changePage(delta) {
+        currentPage += delta;
 
-        // Set the selected item
-        selectedItem = rowId;
+        // Ensure the page is within valid bounds
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
 
-        // Show the context menu
-        $("#contextMenu").css({
-            display: "block",
-            left: event.pageX,
-            top: event.pageY,
+        // Fetch the next set of data asynchronously
+        if (currentSearchTerm.trim() === "") {
+            // No search term, use the default endpoint
+            fetchData(`/get_script_data?page=${currentPage}`);
+        } else {
+            // Use the search endpoint
+            fetchData(`/search?page=${currentPage}`, currentSearchTerm);
+        }
+    }
+
+    function fetchData(url, searchParam = "") {
+        var xhr = new XMLHttpRequest();
+
+        // Include search term in URL if it exists
+        if (searchParam.trim() !== "") {
+            url += `&search=${encodeURIComponent(searchParam)}`;
+        }
+
+        xhr.open('GET', url, true);
+
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                // Parse the response and update the table
+                var responseData = JSON.parse(xhr.responseText);
+                updateTable(responseData);
+
+                // Toggle visibility of Next Page button based on data presence
+                var nextButton = document.getElementById("nextButton");
+                nextButton.style.display = responseData.length === 0 ? "none" : "block";
+            } else {
+                console.error('Failed to fetch data');
+            }
+        };
+
+        xhr.send();
+    }
+
+    function searchData() {
+        var filter = document.getElementById("myInput").value;
+        currentSearchTerm = filter;
+        currentPage = 1; // Reset page to 1 when searching
+        fetchData(`/search?page=${currentPage}`, currentSearchTerm);
+    }
+
+    function updateTable(data) {
+        var tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = ""; // Clear existing rows
+
+        // Loop through the data and append rows to the table
+        data.forEach(function (data_row) {
+            var newRow = "<tr id='data-row-" + data_row.line_id + "' onclick='redirectToDetail(\"" + data_row.line_id +
+                "\")' style='cursor: pointer;'>";
+            newRow += "<td>" + data_row.line_id.split('-').pop() + "</td>";
+            newRow += "<td>" + data_row.character_name + "</td>";
+            newRow += "<td>" + data_row.character_line_number + "</td>";
+            newRow += "<td>" + data_row.dialogue.substring(0, 20) + '...' + "</td>";
+            newRow += "<td>" + data_row.film + "</td>";
+            newRow += "</tr>";
+
+            tableBody.innerHTML += newRow;
         });
 
-        // Prevent the default context menu
-        event.preventDefault();
-    }    
-    
+        // Update the current page in the UI
+        document.getElementById("currentPage").innerText = currentPage;
+    }
+
+    function redirectToDetail(lineId) {
+        window.location.href = "/detail-view/" + lineId;
+    }
+
+    // Initial load
+    fetchData(`/get_script_data?page=${currentPage}`);
 </script>
 
-
+</body>
 </html>

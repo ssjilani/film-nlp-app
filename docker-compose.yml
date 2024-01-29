@@ -20,6 +20,7 @@ services:
     volumes:
       - script_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./script_data_processed.csv:/docker-entrypoint-initdb.d/script_data_processed.csv
 
 volumes:
   script_data:

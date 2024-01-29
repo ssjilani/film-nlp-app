@@ -4,8 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import secrets
 from app.models.script_db import db 
-from web_scraping import extract_script_data
-
 
 def create_app():
     app = Flask(__name__, template_folder='templates')
@@ -15,72 +13,68 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-
-    def populate_data(url):
-        film_title = url.split('/')[-1]
-        film_title = film_title.split('.')[0]
-
-        with app.app_context():
-            script_ = extract_script_data(url)
-
-            for i in range(len(script_)):
-                line_id = f'{film_title}-{i + 1}'
-                character_name = script_[i][0]
-                dialogue = script_[i][1]
-                character_line_number = int(script_[i][2])
-
-                query = text(
-                    """
-                    INSERT INTO script_data (line_id, character_name, dialogue, character_line_number, film)
-                    VALUES (:line_id, :character_name, :dialogue, :character_line_number, :film);
-                    """
-                )
-
-                db.session.execute(
-                    query,
-                    {
-                        'line_id': line_id,
-                        'character_name': character_name,
-                        'dialogue': dialogue,
-                        'character_line_number': character_line_number,
-                        'film': film_title
-                    }
-                )
-
-            db.session.commit()
-
-
-
+        
+    #### routes
 
     @app.route('/')
     def hub():
-
-        sql_query = text(f"""SELECT count(*) FROM script_data
-                         """)
-        with app.app_context():
-            result = db.session.execute(sql_query)
-
-            count = result.fetchone()[0]
-
-        if count > 0:
-            pass
-        else:
-            populate_data("https://imsdb.com/scripts/Batman.html")
-
         return render_template('hub.html')
     
     @app.route('/script-data')
     def data_view():
+        return render_template('view_script.html')
+    
+    @app.route('/get_script_data')
+    def get_script_data():
+        current_page = int(request.args.get('page', 1))
+        items_per_page = 100
 
+        offset = (current_page - 1) * items_per_page
+        
         sql_query = text(f"""SELECT * FROM script_data
-                         """)
+                            LIMIT {items_per_page} OFFSET {offset}
+                        """)
 
         with app.app_context():
             result = db.session.execute(sql_query)
             data = result.fetchall()
 
-        return render_template('view_script.html', data=data)
+        data_dict_list = []
+        for row in data:
+            data_dict = {'line_id': row[0], 'character_name': row[1], 'dialogue': row[2], 'character_line_number': row[3],
+                         'film': row[4], 'url': row[5], 'franchise': row[6]}
+            data_dict_list.append(data_dict)
+
+        return jsonify(data_dict_list)
     
+    @app.route('/search')
+    def search_data():
+        search_term = request.args.get('search', '')
+        current_page = int(request.args.get('page', 1))
+        items_per_page = 100
+        offset = (current_page - 1) * items_per_page
+
+        # Use ILIKE for case-insensitive search
+        sql_query = text(f"""SELECT * FROM script_data
+                            WHERE lower(character_name) LIKE :search_term
+                            OR lower(film) LIKE :search_term
+                            OR lower(dialogue) LIKE :search_term
+                            LIMIT {items_per_page} OFFSET {offset}
+                        """)
+
+        with app.app_context():
+            result = db.session.execute(sql_query, {'search_term': f"%{search_term.lower()}%"})
+            data = result.fetchall()
+
+        data_dict_list = []
+        for row in data:
+            data_dict = {'line_id': row[0], 'character_name': row[1], 'dialogue': row[2], 'character_line_number': row[3],
+                        'film': row[4], 'url': row[5], 'franchise': row[6]}
+            data_dict_list.append(data_dict)
+
+        return jsonify(data_dict_list)
+
+        
     
     @app.route('/detail-view/<line_id>')
     def detail_view(line_id):
@@ -98,7 +92,9 @@ def create_app():
                'character_name' : data[1],
                'dialogue' : data[2],
                'character_line_number' : data[3],
-               'film' : data[4]
+               'film' : data[4],
+               'url' : data[5],
+               'franchise' : data[6]
                }
         return jsonify(dic)
         
