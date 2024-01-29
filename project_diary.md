@@ -12,7 +12,7 @@ For the overall purpose of the project, which requires a substantial amount of d
 
 As an alternative to imsb, https://movies.fandom.com/ was found. It contains transcripts from thousand of films, and the data is quite well parsed, which would decrease the amoumnt of pre-processing required. 
 
-The only caviat is that beautiful soup is not quite effective in extacting data from this website as it requires some user interaction. As an alternatve selenium is being used to extract the data as it has had uses in extracting data from dynamic websites using javascript.
+The only caviat is that beautiful soup is not quite effective in extracting data from this website as it requires some user interaction. As an alternatve selenium is being used to extract the data as it has had uses in extracting data from dynamic websites using javascript.
 
 Furthermore, the data is now going to focus on the MCU franchise of movies, as we can do our analysis effectively, which include character arcs within one film and character arcs over multiple films. Furthermore theres should be quite enough data to create our chatbots. 
 
